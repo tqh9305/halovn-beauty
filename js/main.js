@@ -16,24 +16,24 @@ function local(value) { return typeof value === 'object' ? (value[language] || v
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text !== undefined) el.textContent = text; return el; }
 function productImage(item) { return item.gallery?.vi?.[0]?.src || item.image; }
 function productGallery(item) {
- const images = language === 'vi' ? item.gallery?.vi : null;
+ const images = item.gallery?.[language];
  if (!images?.length) return imageBlock(item.image,local(item.name),'dialog-image',true);
  const gallery = element('div','product-gallery');
- gallery.setAttribute('role','region'); gallery.setAttribute('aria-label','Bộ ảnh sản phẩm');
+ gallery.setAttribute('role','region'); gallery.setAttribute('aria-label',(language==='vi'?"Bộ ảnh sản phẩm":"Product image gallery"));
  const stage = element('div','gallery-stage');
  const picture = element('a','gallery-picture'); picture.target='_blank'; picture.rel='noopener';
  const image = document.createElement('img'); image.decoding='async';
- const fallback=element('p','image-fallback','Không tải được ảnh. Anh/chị vui lòng chọn ảnh khác.');fallback.hidden=true;
+ const fallback=element('p','image-fallback',(language==='vi'?"Không tải được ảnh. Anh/chị vui lòng chọn ảnh khác.":"Unable to load this image. Please select another image."));fallback.hidden=true;
  image.addEventListener('error',()=>{image.hidden=true;fallback.hidden=false;});
  image.addEventListener('load',()=>{image.hidden=false;fallback.hidden=true;});
  picture.append(image,fallback);
- const previous=element('button','gallery-arrow gallery-previous','‹');previous.type='button';previous.setAttribute('aria-label','Ảnh trước');
- const next=element('button','gallery-arrow gallery-next','›');next.type='button';next.setAttribute('aria-label','Ảnh tiếp theo');
+ const previous=element('button','gallery-arrow gallery-previous','‹');previous.type='button';previous.setAttribute('aria-label',(language==='vi'?"Ảnh trước":"Previous image"));
+ const next=element('button','gallery-arrow gallery-next','›');next.type='button';next.setAttribute('aria-label',(language==='vi'?"Ảnh tiếp theo":"Next image"));
  stage.append(picture,previous,next);
  const caption=element('div','gallery-caption');
  const label=element('span','gallery-label');label.setAttribute('aria-live','polite');
- caption.append(label,element('span','gallery-hint','Bấm ảnh để xem kích thước lớn'));
- const thumbs=element('div','gallery-thumbnails');thumbs.setAttribute('aria-label','Chọn ảnh sản phẩm');
+ caption.append(label,element('span','gallery-hint',(language==='vi'?"Bấm ảnh để xem kích thước lớn":"Click the image to view full size")));
+ const thumbs=element('div','gallery-thumbnails');thumbs.setAttribute('aria-label',(language==='vi'?"Chọn ảnh sản phẩm":"Choose a product image"));
  let selected=0;
  const buttons=images.map((entry,index)=>{
   const button=element('button','gallery-thumbnail');button.type='button';button.setAttribute('aria-label',entry.label+' — '+local(item.name));
@@ -43,7 +43,7 @@ function productGallery(item) {
  function select(index) {
   selected=(index+images.length)%images.length;const entry=images[selected];
   image.hidden=false;fallback.hidden=true;image.src=entry.src;image.alt=local(item.name)+' — '+entry.label;
-  picture.href=entry.src;picture.setAttribute('aria-label','Mở ảnh lớn: '+entry.label);
+  picture.href=entry.src;picture.setAttribute('aria-label',(language==='vi'?"Mở ảnh lớn: ":"Open full-size image: ")+entry.label);
   label.textContent=entry.label+' · '+(selected+1)+' / '+images.length;
   buttons.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===selected)));
  }
