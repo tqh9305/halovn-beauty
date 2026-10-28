@@ -14,7 +14,7 @@ let category = 'all', selectedBrand = 'all', visibleLimit = PAGE_SIZE;
 let lastTrigger, currentItem;
 function local(value) { return typeof value === 'object' ? (value[language] || value.vi || value.en || '') : (value || ''); }
 function element(tag, className, text) { const el = document.createElement(tag); if (className) el.className = className; if (text !== undefined) el.textContent = text; return el; }
-function productImage(item) { return item.gallery?.vi?.[0]?.src || item.image; }
+function productImage(item) { return item.gallery?.[language]?.[0]?.src || item.image; }
 function productGallery(item) {
  const images = item.gallery?.[language];
  if (!images?.length) return imageBlock(item.image,local(item.name),'dialog-image',true);
@@ -96,7 +96,7 @@ function renderProducts() {
  document.querySelector('#result-count').textContent = language === 'vi' ? 'Hiển thị ' + shown + ' / ' + filtered.length + ' sản phẩm' : 'Showing ' + shown + ' of ' + filtered.length + ' products';
  filtered.slice(0,visibleLimit).forEach(p => {
   const card = element('button','product-card'); card.type = 'button';
-  const art = imageBlock(productImage(p),local(p.name),'product-art real-product'+(p.gallery?.vi?.length?' supplied-thumbnail':''));
+  const art = imageBlock(productImage(p),local(p.name),'product-art real-product'+(p.gallery?.[language]?.length?' supplied-thumbnail':''));
   art.append(element('span','product-arrow','↗'));
   card.append(art,element('span','product-category',p.brand + ' / ' + t(p.category)),element('h3','',local(p.name)));
   // Internal import IDs are not manufacturer SKU codes.
